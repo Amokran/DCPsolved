@@ -1,23 +1,58 @@
 import os, sys
-def throw_dice(N,faces,total):
-    
-    if N==0:
-        return
-    
+
+def throw_first(N,faces,total):
+    combimatrix = []
+       
+    #Iterate through dice's faces/numbers 
     j=1
-    lsuma = []
+    M=N-1
     while (j <= faces):
-        if (j+(N-i) >= total):
-            i=i
-        ++j
+        #check if this face/number can be in some winner combination
+        if ( ( j + M <= total ) and ( j+ M*faces >= total ) ):
+              combination = []
+              combination.append(j)
+              combimatrix[j] = throw_next(M,faces,total,combination)
+ 
+    return combimatrix
 
-    return suma()
+def throw_next(N,faces,total,combination):
+    
+    print('*')
 
-def suma_lista(lsuma):
-    sumatorio=0
-    for el in lsuma:
-        sumatorio += el
-    return sumatorio    
+    M=N-1 # M = Dice left
+    acc = get_acc_value(combination)
+    
+    #Debug print
+    print(f"Current Combination: {combination}")
+    print(f"Accumulated: {acc}")
+    print(f"Dice left: {M}")
+    
+    #Iterate through dice's faces/numbers 
+    j=1
+    while (j <= faces):
+        print(f"j is: {j}")
+        if M>0:
+            print(f"{M} dice left..")
+            #There is more dice left. Check if this face/number can be in some winner combination
+            if ( ( acc + j + M <= total ) and ( acc + j+ M*faces >= total ) ):
+                print(f"{j} is part of one of the  winning combinations which add up to {total}")
+                combination.append(j)
+                combination = throw_next(M,faces,total,combination)
+        else:
+            print(f"This is the last dice")
+            #It's the last dice. Check if this face/number adds up to form a winner combination        
+            if ( acc + j == total):
+                combination.append(j)
+                return combination
+        j = j + 1
+
+    #return combination
+
+def get_acc_value(combination):
+    addsupto=0
+    for num in combination:
+        addsupto = addsupto + num
+    return addsupto 
 
 def main():
 
@@ -35,7 +70,9 @@ def main():
         print(f"Problem conditions OK")
     
     print(f"Invoking throw_dice({N},{faces},{total})")
-    #throw_dice(N,faces,total)
+    solutions = throw_first(N,faces,total)
+    print(f"Below you can see the solutions:")
+    print(f"{solutions}") 
     
 main()
 
