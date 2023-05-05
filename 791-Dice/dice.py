@@ -1,52 +1,61 @@
 import os, sys
 
+DBG = False #Enable (true) to see traces
+
 def throw_first(N,faces,total):
     combimatrix = []
-       
+    combination = []
+  
     #Iterate through dice's faces/numbers 
     j=1
     M=N-1
     while (j <= faces):
         #check if this face/number can be in some winner combination
         if ( ( j + M <= total ) and ( j+ M*faces >= total ) ):
-              combination = []
-              combination.append(j)
-              combimatrix[j] = throw_next(M,faces,total,combination)
+            combination.clear()
+            combination.append(j)
+            solution = throw_next(M,faces,total,combination)
  
+            print(f"Solution {j} is: "+str(solution))
+
+        j = j + 1
     return combimatrix
 
 def throw_next(N,faces,total,combination):
     
-    print('*')
+    if DBG: print(f'*')
 
     M=N-1 # M = Dice left
     acc = get_acc_value(combination)
     
     #Debug print
-    print(f"Current Combination: {combination}")
-    print(f"Accumulated: {acc}")
-    print(f"Dice left: {M}")
-    
+    if DBG: print(f"Current Combination: {combination}")
+    if DBG: print(f"Accumulated: {acc}")
+    if DBG: print(f"Dice left: {M}")
+    if DBG: print(f"")
     #Iterate through dice's faces/numbers 
     j=1
     while (j <= faces):
-        print(f"j is: {j}")
+        if DBG: print(f"j is: {j}")
+        if DBG: print(f"")
+        newcombination=combination
         if M>0:
-            print(f"{M} dice left..")
+            if DBG:print(f"{M} dice left..")
+            if DBG:print(f"")
             #There is more dice left. Check if this face/number can be in some winner combination
             if ( ( acc + j + M <= total ) and ( acc + j+ M*faces >= total ) ):
-                print(f"{j} is part of one of the  winning combinations which add up to {total}")
-                combination.append(j)
-                combination = throw_next(M,faces,total,combination)
+                if DBG:print(f"{j} is part of one of the  winning combinations which add up to {total}")
+                newcombination.append(j)
+                newcombination = throw_next(M,faces,total,newcombination)
+                return newcombination
         else:
-            print(f"This is the last dice")
+            if DBG:print(f"This is the last dice")
             #It's the last dice. Check if this face/number adds up to form a winner combination        
             if ( acc + j == total):
-                combination.append(j)
-                return combination
+                if DBG:print(f"{j} is the last element  of a winning combinations which add up to {total}")
+                newcombination.append(j)
+                return newcombination
         j = j + 1
-
-    #return combination
 
 def get_acc_value(combination):
     addsupto=0
