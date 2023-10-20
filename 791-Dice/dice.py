@@ -1,26 +1,38 @@
 import os, sys
+import itertools
 
 DBG = False #Enable (true) to see traces
 
+#this calculates if each of the numbers in the first dice can be part of a solution
+#and calls a recursive funtion to obtain the values for the rest of dice to form a solution
 def throw_first(N,faces,total):
-    combimatrix = []
-    combination = []
+    solutionpool = []
   
     #Iterate through dice's faces/numbers 
     j=1
-    M=N-1
+    M=N-1 # M = the rest of the dice apart for the one "rolled" here 
     while (j <= faces):
-        #check if this face/number can be in some winner combination
+        #check if j can be in some winner combination,
+        #for being a candidate, j has to meet two conditions
         if ( ( j + M <= total ) and ( j+ M*faces >= total ) ):
-            combination.clear()
+            combination = []
+            permutations = []
+            
             combination.append(j)
             solution = throw_next(M,faces,total,combination)
- 
             print(f"Solution {j} is: "+str(solution))
 
+            permutations = itertools.permutations(solution)
+            for perm in permutations:
+               try:
+                   pos =  solutionpool.index(perm) #check if the permutation already exists in the solutionpool. If not, then a ValueError is thrown
+               except ValueError:                                      
+                    solutionpool.append(perm) #permutation didn't exist in the solutionpool, let's add it            
+           
         j = j + 1
-    return combimatrix
+    return solutionpool
 
+#this is a recursive function
 def throw_next(N,faces,total,combination):
     
     if DBG: print(f'*')
